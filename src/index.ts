@@ -263,19 +263,23 @@ class GodotServer {
 
       // Check if the file exists (skip for 'godot' which might be in PATH)
       if (path !== 'godot' && !existsSync(path)) {
+        console.error(`[SERVER] Godot path does not exist: ${path}`);
         this.logDebug(`Path does not exist: ${path}`);
         this.validatedPaths.set(path, false);
         return false;
       }
 
-      // Try to execute Godot with --version flag
+      // Try to execute Godot with --version flag (with timeout)
       const command = path === 'godot' ? 'godot --version' : `"${path}" --version`;
-      await execAsync(command);
+      await execAsync(command, { timeout: 10000 }); // 10 second timeout
 
+      console.log(`[SERVER] Valid Godot executable found at: ${path}`);
       this.logDebug(`Valid Godot path: ${path}`);
       this.validatedPaths.set(path, true);
       return true;
-    } catch (error) {
+    } catch (error: any) {
+      console.error(`[SERVER] Godot path validation failed: ${path}`);
+      console.error(`[SERVER] Error: ${error.message || error}`);
       this.logDebug(`Invalid Godot path: ${path}, error: ${error}`);
       this.validatedPaths.set(path, false);
       return false;
@@ -295,13 +299,19 @@ class GodotServer {
     // Check environment variable next
     if (process.env.GODOT_PATH) {
       const normalizedPath = normalize(process.env.GODOT_PATH);
+      console.log(`[SERVER] Checking GODOT_PATH environment variable: ${normalizedPath}`);
       this.logDebug(`Checking GODOT_PATH environment variable: ${normalizedPath}`);
       if (await this.isValidGodotPath(normalizedPath)) {
         this.godotPath = normalizedPath;
+        console.log(`[SERVER] Using Godot from GODOT_PATH: ${this.godotPath}`);
         this.logDebug(`Using Godot path from environment: ${this.godotPath}`);
         return;
       } else {
+        // If GODOT_PATH is explicitly set but invalid, don't fallback
+        console.error(`[SERVER] GODOT_PATH environment variable is set but invalid: ${normalizedPath}`);
+        console.error(`[SERVER] Please verify the path points to a valid Godot executable`);
         this.logDebug(`GODOT_PATH environment variable is invalid`);
+        throw new Error(`Invalid GODOT_PATH: ${normalizedPath}. Please verify the path points to a valid Godot executable.`);
       }
     }
 

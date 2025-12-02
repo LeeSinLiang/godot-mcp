@@ -1,254 +1,137 @@
 # Godot MCP Server
 
-A Model Context Protocol (MCP) server that enables AI assistants to interact with the Godot game engine. Control the editor, run projects, manage scenes, and capture debug output through a standardized interface.
+MCP server for AI assistants to control Godot Engine: launch editor, run projects, manage scenes, capture debug output.
+
+## Setup
+
+### Step 1: Install godot-mcp (one-time)
+
+```bash
+git clone https://github.com/LeeSinLiang/godot-mcp.git ~/tools/godot-mcp
+cd ~/tools/godot-mcp
+npm install
+npm run build
+npm link
+```
+
+### Step 2: Configure your Godot project (per-project)
+
+```bash
+cd ~/my-games/your-godot-project
+godot-mcp-init
+```
+
+The tool will:
+1. Ask for your Godot executable path
+2. Select which clients to configure (Claude Desktop, Claude Code, Cursor)
+3. Create configuration files automatically
+
+**That's it!** Start using AI assistance in Cursor or Claude Code.
 
 ## Features
 
-- **Debug Support**: Capture output, connect to remote debugger, get real-time logs
-- **Seamless Integration between Godot Editor** Write code in godot editor, run, and debug with AI assistance. No longer need of running in blind or without editors.
-- **Project Management**: Launch editor, run projects, list and inspect Godot projects
-- **Scene Manipulation**: Create scenes, add nodes, configure properties
-- **Asset Loading**: Load sprites, textures, and export mesh libraries
-- **Cross-Platform**: Windows, macOS, and Linux support
+- **Project Management**: Launch editor, run/stop projects, list/inspect Godot projects
+- **Scene Editing**: Create scenes, add/configure nodes, load sprites, export mesh libraries
+- **Remote Debugging (Recommended)**: Connect to Godot editor's remote debugger, capture real-time output while running in editor
+- **Debug Output**: Get print statements, errors, and warnings from running projects
+- **Cross-Platform**: Windows, macOS, Linux support
 
-## Installation
+## Available MCP Tools
 
-### Prerequisites
+### Remote Debugging Workflow (Recommended)
 
-- [Godot Engine 4.x](https://godotengine.org/download) installed
-- Node.js 16+ and npm
+Work seamlessly with the Godot editor while AI assists you:
 
-### Install from npm (coming soon)
+1. **`connect_remote_debugger`** - Connect to Godot editor's remote debugger (default ports 6006/6007)
+2. Press **F5** in Godot editor to run your project
+3. **`get_remote_debug_output`** - Get real-time print statements, errors, and warnings
+4. Make changes with AI assistance and test immediately in the editor
 
-```bash
-npm install -g godot-mcp
-```
+This workflow allows you to:
+- Write code in Godot editor with syntax highlighting and autocomplete
+- Run and debug with F5 while AI monitors output and suggests fixes
+- No blind coding - see exactly what's happening in real-time
 
-### Install from source
+## All Available Tools
 
-```bash
-git clone https://github.com/yourusername/godot-mcp.git
-cd godot-mcp
-npm install
-npm run build
-```
+**Project Management:** `launch_editor`, `run_project`, `stop_project`, `list_projects`, `get_project_info`, `get_godot_version`
 
-## Configuration
+**Scene Editing:** `create_scene`, `add_node`, `load_sprite`, `save_scene`, `export_mesh_library`
 
-### For Claude Desktop
+**Debug & Remote:** `connect_remote_debugger`, `get_remote_debug_output`, `disconnect_remote_debugger`, `get_debug_output`, `capture_screenshot`
 
-Add to your Claude Desktop configuration file:
+**UID Management (Godot 4.4+):** `get_uid`, `update_project_uids`
 
-**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+## Godot Executable Path Examples
 
-**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+**Windows:** `C:\Program Files\Godot\Godot.exe` or `C:\Downloads\Godot_v4.5.1-stable_win64.exe\Godot_v4.5.1-stable_win64.exe`
 
-**Linux**: `~/.config/Claude/claude_desktop_config.json`
+**macOS:** `/Applications/Godot.app/Contents/MacOS/Godot`
 
-```json
-{
-  "mcpServers": {
-    "godot": {
-      "command": "node",
-      "args": ["/path/to/godot-mcp/build/index.js"],
-      "env": {
-        "GODOT_PATH": "/path/to/your/godot/executable"
-      }
-    }
-  }
-}
-```
-
-### For Claude Code
-
-Claude Code supports MCP servers direct configuration.
-
-Edit `.mcp.json`:
-
-```json
-{
-  "mcpServers": {
-    "godot": {
-      "command": "node",
-      "args": ["/path/to/godot-mcp/build/index.js"],
-      "env": {
-        "GODOT_PATH": "/path/to/your/godot/executable",
-        "DEBUG": "true"
-      }
-    }
-  }
-}
-```
-
-Verify the configuration:
-```bash
-claude mcp list
-```
-
-### For Cursor IDE
-
-Cursor supports MCP servers through project-specific or global configuration.
-
-**Option 1: Project-Specific (Recommended for Godot projects)**
-
-Create `.cursor/mcp.json` in your project root:
-
-```json
-{
-  "mcpServers": {
-    "godot": {
-      "command": "node",
-      "args": ["/path/to/godot-mcp/build/index.js"],
-      "env": {
-        "GODOT_PATH": "/path/to/your/godot/executable",
-        "DEBUG": "true"
-      }
-    }
-  }
-}
-```
-
-**Option 2: Global Configuration**
-
-Create `~/.cursor/mcp.json` in your home directory with the same format.
-
-**Option 3: Via Cursor Settings UI**
-
-1. Open Cursor Settings → Features → MCP
-2. Click "+ Add New MCP Server"
-3. Fill in:
-   - **Name**: `godot`
-   - **Command**: `node`
-   - **Args**: `/path/to/godot-mcp/build/index.js`
-   - **Environment**: `GODOT_PATH=/path/to/your/godot/executable`
-
-Verify in the **Output panel** (Ctrl+Shift+U) → Select "MCP Logs"
-
-### Environment Variables
-
-- `GODOT_PATH`: Path to Godot executable (optional if Godot is in PATH or standard location)
-- `DEBUG`: Set to `"true"` to enable detailed logging
-
-### Platform-Specific Godot Paths
-
-**Windows**:
-```
-C:\Program Files\Godot\Godot.exe
-```
-
-**macOS**:
-```
-/Applications/Godot.app/Contents/MacOS/Godot 
-```
-(do not include .app, just the executable path without ending of .app)
-
-**Linux**:
-```
-/usr/bin/godot
-/usr/local/bin/godot
-/snap/bin/godot
-```
-
-## Available Tools
-
-The MCP server provides the following tools that AI assistants can use:
-
-### Project Management
-- **`launch_editor`** - Launch Godot editor for a specific project
-- **`run_project`** - Run a Godot project and capture output
-- **`stop_project`** - Stop the currently running project
-- **`list_projects`** - Find Godot projects in a directory
-- **`get_project_info`** - Get metadata about a Godot project
-- **`get_godot_version`** - Get the installed Godot version
-
-### Scene Management
-- **`create_scene`** - Create a new scene file with a specified root node type
-- **`add_node`** - Add a node to an existing scene with optional properties
-- **`load_sprite`** - Load a sprite texture into a Sprite2D node
-- **`save_scene`** - Save changes to a scene file
-- **`export_mesh_library`** - Export a scene as a MeshLibrary resource for GridMap
-
-### Debug & Output
-- **`get_debug_output`** - Get debug output and errors from a running project
-- **`connect_remote_debugger`** - Connect to Godot editor's remote debugger (ports 6006/6007)
-- **`get_remote_debug_output`** - Get output from the remote debugger connection
-- **`disconnect_remote_debugger`** - Disconnect from the remote debugger
-- **`capture_screenshot`** - Capture a screenshot from the running game viewport
-
-### UID Management (Godot 4.4+)
-- **`get_uid`** - Get the UID for a specific file
-- **`update_project_uids`** - Resave resources to update UID references
-
-## Development
-
-### Build
-
-```bash
-npm run build
-```
-
-### Watch Mode
-
-```bash
-npm run watch
-```
-
-### Testing with MCP Inspector
-
-```bash
-npm run inspector
-```
-
-This launches the MCP inspector for interactive testing of all tools.
-
-## Note
-Screenshot capture is still experimental and may not work in all environments.
+**Linux:** `/usr/bin/godot` or `/usr/local/bin/godot`
 
 ## Troubleshooting
 
-### Godot Not Found
+### "Failed to connect tool" or MCP server won't start
 
-If the server can't find Godot, set the `GODOT_PATH` environment variable in your MCP configuration:
+**Most common cause:** Wrong Godot executable path in configuration.
 
+**Solution:**
+1. Verify your Godot path by running: `"<your-godot-path>" --version`
+2. Update the path in your config file:
+   - **Claude Code:** Edit `.mcp.json` in your project directory
+   - **Cursor:** Edit `.cursor/mcp.json` in your project directory
+   - **Claude Desktop:** Check config in `%APPDATA%\Claude\` (Windows) or `~/Library/Application Support/Claude/` (macOS)
+
+3. Restart your IDE/application after updating the config
+
+**Check logs:**
+- **Cursor:** Output panel → "MCP Logs" (Ctrl+Shift+U)
+- **Claude Code:** Terminal output or MCP logs
+
+
+### Manual Configuration
+If you prefer manual setup, create config files:
+
+**Claude Code** - `.mcp.json` in project directory:
 ```json
 {
-  "env": {
-    "GODOT_PATH": "/full/path/to/godot"
+  "mcpServers": {
+    "godot": {
+      "command": "node",
+      "args": ["/path/to/godot-mcp/build/index.js"],
+      "env": { "GODOT_PATH": "/path/to/godot/executable" }
+    }
   }
 }
 ```
 
-### Scene File Not Created
+**Cursor** - `.cursor/mcp.json` in project directory (same format as above)
 
-If scenes aren't being created:
-1. Check directory permissions
-2. Verify the project path contains `project.godot`
-3. Enable debug mode to see detailed logs
+**Claude Desktop** - `%APPDATA%\Claude\claude_desktop_config.json` (Windows) or `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS):
+```json
+{
+  "mcpServers": {
+    "godot": {
+      "command": "node",
+      "args": ["/path/to/godot-mcp/build/index.js"],
+      "env": { "GODOT_PATH": "/path/to/godot/executable" }
+    }
+  }
+}
+```
 
-### Remote Debugger Connection Issues
+## Development
 
-- Ensure Godot editor is running with remote debugging enabled
-- Default ports: 6007 (editor sync), 6006 (script debugger)
-- Check firewall settings aren't blocking the connection
+```bash
+npm run build      # Build the project
+npm run watch      # Watch mode for development
+npm run inspector  # Test with MCP inspector
+```
 
-## Related Projects
+## Links
 
-- [Model Context Protocol](https://github.com/anthropics/mcp) - The protocol specification
-- [Godot Engine](https://godotengine.org/) - The game engine
-- [Claude Desktop](https://claude.ai/) - AI assistant with MCP support
-
-## Acknowledgements
-Inspired by Coding Solo's godot-mcp. https://github.com/Coding-Solo/godot-mcp 
-
-## Support
-
-For issues and questions:
-- File an issue on GitHub
-
-## References
-
-Configuration guides referenced from:
-- [Cursor MCP Documentation](https://docs.cursor.com/context/model-context-protocol)
-- [Claude Code MCP Setup Guide](https://docs.claude.com/en/docs/claude-code/mcp)
-- [MCP Configuration Tutorial](https://medium.com/@tanmoy234am/how-to-set-up-mcp-servers-in-cursor-step-by-step-guide-17852970dbed)
-- [Configuring MCP Tools in Claude Code](https://scottspence.com/posts/configuring-mcp-tools-in-claude-code)
+- [Godot MCP Repository](https://github.com/LeeSinLiang/godot-mcp)
+- [Model Context Protocol](https://github.com/anthropics/mcp)
+- [Godot Engine](https://godotengine.org/)
+- Inspired by [Coding Solo's godot-mcp](https://github.com/Coding-Solo/godot-mcp)
