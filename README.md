@@ -1,6 +1,6 @@
 # Godot MCP Server
 
-MCP server for AI assistants to control Godot Engine: launch editor, run projects, manage scenes, capture debug output.
+A MCP server for AI assistants (Claude Code, Cursor, Codex etc) to control and access Godot Engine: capturing errors in editor, managing scenes, and remote connections allowing real-time build and debug - synchronized with your Godot editor.
 
 ## Setup
 
@@ -54,12 +54,9 @@ This workflow allows you to:
 
 ## All Available Tools
 
-**Project Management:** `launch_editor`, `run_project`, `stop_project`, `list_projects`, `get_project_info`, `get_godot_version`
-
-**Scene Editing:** `create_scene`, `add_node`, `load_sprite`, `save_scene`, `export_mesh_library`
-
 **Debug & Remote:** `connect_remote_debugger`, `get_remote_debug_output`, `disconnect_remote_debugger`, `get_debug_output`, `capture_screenshot`
-
+**Project Management:** `launch_editor`, `run_project`, `stop_project`, `list_projects`, `get_project_info`, `get_godot_version`
+**Scene Editing:** `create_scene`, `add_node`, `load_sprite`, `save_scene`, `export_mesh_library`
 **UID Management (Godot 4.4+):** `get_uid`, `update_project_uids`
 
 ## Godot Executable Path Examples
@@ -128,10 +125,3 @@ npm run build      # Build the project
 npm run watch      # Watch mode for development
 npm run inspector  # Test with MCP inspector
 ```
-
-## Links
-
-- [Godot MCP Repository](https://github.com/LeeSinLiang/godot-mcp)
-- [Model Context Protocol](https://github.com/anthropics/mcp)
-- [Godot Engine](https://godotengine.org/)
-- Inspired by [Coding Solo's godot-mcp](https://github.com/Coding-Solo/godot-mcp)
