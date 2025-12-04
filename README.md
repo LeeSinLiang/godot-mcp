@@ -54,10 +54,10 @@ This workflow allows you to:
 
 ## All Available Tools
 
-**Debug & Remote:** `connect_remote_debugger`, `get_remote_debug_output`, `disconnect_remote_debugger`, `get_debug_output`, `capture_screenshot`
-**Project Management:** `launch_editor`, `run_project`, `stop_project`, `list_projects`, `get_project_info`, `get_godot_version`
-**Scene Editing:** `create_scene`, `add_node`, `load_sprite`, `save_scene`, `export_mesh_library`
-**UID Management (Godot 4.4+):** `get_uid`, `update_project_uids`
+- **Debug & Remote:** `connect_remote_debugger`, `get_remote_debug_output`, `disconnect_remote_debugger`, `get_debug_output`, `capture_screenshot`
+- **Project Management:** `launch_editor`, `run_project`, `stop_project`, `list_projects`, `get_project_info`, `get_godot_version`
+- **Scene Editing:** `create_scene`, `add_node`, `load_sprite`, `save_scene`, `export_mesh_library`
+- **UID Management (Godot 4.4+):** `get_uid`, `update_project_uids`
 
 ## Godot Executable Path Examples
 
